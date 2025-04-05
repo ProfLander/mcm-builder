@@ -407,6 +407,7 @@ KeybindBox = {
     cmd = AbstractOption.cmd,
     precondition = AbstractOption.precondition,
     hint = AbstractOption.hint,
+    default = AbstractOption.default,
 }
 
 
