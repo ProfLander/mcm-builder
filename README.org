@@ -2,16 +2,16 @@
 MCM Builder, originally authored by Igigog. Adopted from ModDB to GitHub by Lander.
 
 ** Examples
-*** MCM Building
+*** Basic Usage
 True to its name, MCM Builder's primary function is to simplify the creation of MCM pages via builder pattern:
 
 #+begin_src lua
-Tree = mcm_builder.Tree
-Page = mcm_builder.Page
-Checkbox = mcm_builder.Checkbox
-Title = mcm_builder.Title
-Line = mcm_builder.Line
-Description = mcm_builder.Description
+local Tree = mcm_builder.Tree
+local Page = mcm_builder.Page
+local Checkbox = mcm_builder.Checkbox
+local Title = mcm_builder.Title
+local Line = mcm_builder.Line
+local Description = mcm_builder.Description
 
 function on_mcm_load()
    local tree = Tree.new("MCM_Builder")
@@ -32,12 +32,15 @@ end
 #+end_src
 
 *** Data Access
-MCM builder's primitives can also be used as an interface to their respective settings.
+MCM builder's primitives can also be used as an object-oriented interface to their respective settings.
 
 We begin by defining the root of our mod's MCM tree:
 
 ~my_mod_mcm.script~
 #+begin_src lua
+local Tree = mcm_builder.Tree
+
+-- This time we expose our tree as a global reference
 tree = Tree.new("TotallyTubular")
 
 -- Trivial MCM entrypoint
@@ -46,20 +49,24 @@ function on_mcm_load()
 end
 #+end_src
 
-From there, we can create a script for some subsystem or other, fetch a reference to our tree, and add a page:
+From there, we can create a script for some subsystem or other (remembering to add an ~_mcm~ suffix to its name so it will load in time for MCM,) fetch a reference to our tree, and add a page:
 
 ~my_mod_system_mcm.script~
 #+begin_src lua
+local tree = my_mod_mcm.tree
+
 -- Subsystems in other scripts
 -- (which must themselves have an `_mcm` suffix for proper load behaviour)
 -- are free to fetch a reference to it and define new child elements:
 page = tree:pages("Stuff")
 #+end_src
 
-Let's assume our subsystem has some sub-subsystem; it can fetch a reference to the page we just created and populate MCM settings like so:
+Let's assume our subsystem has some sub-subsystem; it can fetch a reference to the page we just created and inject MCM settings into it like so:
 
 ~my_mod_system_subsystem_mcm.script~
 #+begin_src lua
+local page = my_mod_system_mcm.page
+
 -- Likewise, code downstream of page creators is also free
 -- to fetch and populate via reference:
 gubbin = page:settings(Checkbox.new("Gubbin"):default(false))
