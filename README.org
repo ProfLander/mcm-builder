@@ -1,0 +1,26 @@
+* MCM Builder
+MCM Builder, originally authored by Igigog. Adopted from ModDB to GitHub by Lander.
+
+** Original description:
+
+A love letter to Mod Configuration Menu. Only usable to modders with programming background, probably.
+
+Imagine Object-Oriented MCM. Now you have it. It is quite nice, if you ask me.
+
+*** FAQ
+
+- Why?
+  - Looks nice. Feels nice. Reads nice. And I actually can see which class what methods has.
+
+- Is it slower than native MCM? Is it slow? Is it so enormously slow I could actually feel the difference?
+
+  - Very yes. Very very yes. Probably no, but need to check with many addons at once.
+
+- How does it even look?
+  - Check out example function at the bottom of the script.
+
+- Are you having the time of your life? Are you okay?
+  - Absolutely. Absolutely no.
+
+- When Tasks stable?
+  - Tasks stable not today.
