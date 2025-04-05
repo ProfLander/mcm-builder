@@ -1,6 +1,100 @@
 * MCM Builder
 MCM Builder, originally authored by Igigog. Adopted from ModDB to GitHub by Lander.
 
+** Examples
+*** MCM Building
+True to its name, MCM Builder's primary function is to simplify the creation of MCM pages via builder pattern:
+
+#+begin_src lua
+Tree = mcm_builder.Tree
+Page = mcm_builder.Page
+Checkbox = mcm_builder.Checkbox
+Title = mcm_builder.Title
+Line = mcm_builder.Line
+Description = mcm_builder.Description
+
+function on_mcm_load()
+   local tree = Tree.new("MCM_Builder")
+   local page = Page.new("With Checkbox")
+   local check = Checkbox.new("My_cool_checkbox"):default(true)
+   page:add(check)
+
+   local page_two = Page.new("With_description_and_line")
+   local title = Title.new("uwu")
+               :text("Title??? Omegalul")
+               :color(200,100,50,255)
+   page_two:add(title)
+   page_two:add(Description.new("descr"):text("What a nice description"))
+   page_two:add(Line.new())
+
+   return tree:add_page(page):add_page(page_two):build()
+end
+#+end_src
+
+*** Data Access
+MCM builder's primitives can also be used as an interface to their respective settings.
+
+We begin by defining the root of our mod's MCM tree:
+
+~my_mod_mcm.script~
+#+begin_src lua
+tree = Tree.new("TotallyTubular")
+
+-- Trivial MCM entrypoint
+function on_mcm_load()
+   return tree:build()
+end
+#+end_src
+
+From there, we can create a script for some subsystem or other, fetch a reference to our tree, and add a page:
+
+~my_mod_system_mcm.script~
+#+begin_src lua
+-- Subsystems in other scripts
+-- (which must themselves have an `_mcm` suffix for proper load behaviour)
+-- are free to fetch a reference to it and define new child elements:
+page = tree:pages("Stuff")
+#+end_src
+
+Let's assume our subsystem has some sub-subsystem; it can fetch a reference to the page we just created and populate MCM settings like so:
+
+~my_mod_system_subsystem_mcm.script~
+#+begin_src lua
+-- Likewise, code downstream of page creators is also free
+-- to fetch and populate via reference:
+gubbin = page:settings(Checkbox.new("Gubbin"):default(false))
+
+-- Trees can also nest one level within other trees:
+nest_tree = tree:subtrees("Things")
+nest_page = nest_tree:pages("Stuff")
+
+-- The `trees`, `pages` and `settings` functions are variadic
+-- in both input and output for more ergonomic definition:
+foo, bar = page:settings(
+   Checkbox.new("Foo"):default(true),
+   Trackbar.new("Bar"):default(1),
+)
+
+-- Easy peasy runtime code
+function actor_on_update()
+   -- Simple fetching
+   printf("Gubbin from MCM: %s", gubbin:get())
+   printf("Foo from MCM: %s", foo:get())
+
+   -- The getter method takes an optional function parameter,
+   -- which receives the control's MCM path as a list,
+   -- and returns a fallback value for cases where
+   -- MCM values are unavailable or unset
+   printf("Bar from MCM: %s", bar:get(function(path) return 3.141 end))
+end
+
+function on_game_start()
+   RegisterScriptCallback("actor_on_update", actor_on_update)
+end
+#+end_src
+
+This approach allows definition and access to be localized in scripts where they're most relevant, better-integrating them with the rest of codebase and avoiding the creation of a monolithic 'MCM sin-bin' script.
+
 ** Original description:
 
 A love letter to Mod Configuration Menu. Only usable to modders with programming background, probably.
